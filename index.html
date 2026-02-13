@@ -6,16 +6,35 @@
     <title>Black Hole Sultan</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-        #game-canvas {
+        
+        /* The Floor */
+        #game-map {
+            position: absolute;
             width: 100vw;
             height: 100vh;
             background-image: url('GW1.png');
             background-size: 32px 32px;
             image-rendering: pixelated;
         }
+
+        /* The Character */
+        #player {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 64px; /* Double the tile size so he stands out */
+            height: 64px;
+            transform: translate(-50%, -50%); /* Keeps him perfectly centered */
+            background-image: url('S_IdleRS.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            image-rendering: pixelated;
+        }
     </style>
 </head>
 <body>
-    <div id="game-canvas"></div>
+    <div id="game-map">
+        <div id="player"></div>
+    </div>
 </body>
 </html>
