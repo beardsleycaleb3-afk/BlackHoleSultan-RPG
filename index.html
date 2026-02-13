@@ -6,123 +6,75 @@
     <title>Black Hole Sultan</title>
     <style>
         * { box-sizing: border-box; }
-        
-        body, html { 
-            margin: 0; padding: 0; 
-            width: 100%; height: 100%; 
-            overflow: hidden; 
-            background: #2a2a2a; 
-            display: flex; 
-            flex-direction: column; 
-        }
-        
-        #console-frame {
-            padding: 15px 15px 0 15px; 
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: #2a2a2a; 
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
 
+        /* Screen Manager */
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+        .active { display: flex; flex-direction: column; }
+
+        /* Start Screen */
+        #start-page { background: #1a1a1a; justify-content: center; align-items: center; color: gold; }
+        
+        /* Game/Map Screen */
+        #game-page { background: #2a2a2a; }
+        #console-frame { padding: 15px 15px 0 15px; display: flex; flex-direction: column; height: 100%; }
         #viewport { 
-            position: relative; 
-            flex: 0 0 70%; 
-            width: 100%; 
-            background-image: url('GW1.png'); 
-            background-size: 32px 32px; 
-            image-rendering: pixelated; 
-            border: 8px solid #000; 
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative; flex: 0 0 70%; width: 100%; 
+            background-image: url('GW1.png'); background-size: 32px 32px; 
+            image-rendering: pixelated; border: 8px solid #000; border-radius: 12px;
+            overflow: hidden; 
         }
+        #inner-border { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 10px solid transparent; border-image: url('NWYBorder.png') 32 round; pointer-events: none; z-index: 5; }
+        #player { position: absolute; top: 50%; left: 50%; width: 64px; height: 64px; transform: translate(-50%, -50%); background-image: url('S_IdleRS.png'); background-size: contain; background-repeat: no-repeat; image-rendering: pixelated; z-index: 2; }
 
-        #inner-border {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border: 10px solid transparent;
-            border-image: url('NWYBorder.png') 32 round;
-            pointer-events: none;
-            z-index: 5;
-        }
+        /* Controls Area */
+        #controls-area { flex: 0 0 30%; display: flex; justify-content: space-around; align-items: center; padding-bottom: 60px; }
+        #dpad { display: grid; grid-template-columns: repeat(3, 30px); gap: 25px; }
+        .btn { width: 30px; height: 30px; background: #1a1a1a; border: 1px solid #444; color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+        .action-btn { width: 65px; height: 65px; border-radius: 50%; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px #000; }
+        .btn-a { background: #c0392b; } .btn-b { background: #2980b9; }
 
-        #player { 
-            position: absolute; 
-            top: 50%; left: 50%; 
-            width: 64px; height: 64px; 
-            transform: translate(-50%, -50%); 
-            background-image: url('S_IdleRS.png'); 
-            background-size: contain; 
-            background-repeat: no-repeat; 
-            image-rendering: pixelated; 
-            z-index: 2;
-        }
-
-        #controls-area { 
-            flex: 0 0 30%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 10px 20px 50px 20px; /* High bottom padding for phone nav */
-            background: #2a2a2a; 
-        }
-
-        /* D-PAD - Half Size (25px) with wide gaps (20px) */
-        #dpad { 
-            display: grid; 
-            grid-template-columns: repeat(3, 25px); 
-            grid-template-rows: repeat(3, 25px); 
-            gap: 20px; 
-        }
-        .btn { 
-            width: 25px; height: 25px; 
-            background: #1a1a1a; border: 1px solid #444; 
-            color: #fff; display: flex; align-items: center; justify-content: center; 
-            border-radius: 4px; font-weight: bold; font-size: 12px; touch-action: manipulation;
-            box-shadow: 0 3px #000;
-        }
-        .up { grid-column: 2; grid-row: 1; }
-        .left { grid-column: 1; grid-row: 2; }
-        .right { grid-column: 3; grid-row: 2; }
-        .down { grid-column: 2; grid-row: 3; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 1px #000; }
-
-        /* ACTION BUTTONS - Keeping these a good size */
-        #action-buttons { display: flex; gap: 15px; }
-        .action-btn { 
-            width: 65px; height: 65px; 
-            border-radius: 50%; border: 4px solid #1a1a1a; 
-            color: white; font-weight: bold; font-size: 22px;
-            display: flex; align-items: center; justify-content: center;
-            touch-action: manipulation;
-            box-shadow: 0 5px #000;
-        }
-        .btn-a { background: #c0392b; } 
-        .btn-b { background: #2980b9; }
-        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px #000; }
+        /* Battle & Item Overlays */
+        #battle-page { background: maroon; justify-content: center; align-items: center; color: white; }
+        #item-page { background: #111; justify-content: center; align-items: center; color: white; }
     </style>
 </head>
 <body>
 
-    <div id="console-frame">
-        <div id="viewport">
-            <div id="inner-border"></div>
-            <div id="player"></div>
-        </div>
+    <div id="start-page" class="page active">
+        <h1>BLACK HOLE SULTAN</h1>
+        <button onclick="changePage('game-page')" style="padding:20px;">START GAME</button>
+    </div>
 
-        <div id="controls-area">
-            <div id="dpad">
-                <div class="btn up" onclick="move('up')">▲</div>
-                <div class="btn left" onclick="move('left')">◀</div>
-                <div class="btn right" onclick="move('right')">▶</div>
-                <div class="btn down" onclick="move('down')">▼</div>
+    <div id="game-page" class="page">
+        <div id="console-frame">
+            <div id="viewport">
+                <div id="inner-border"></div>
+                <div id="player"></div>
             </div>
-
-            <div id="action-buttons">
-                <div class="action-btn btn-b" onclick="console.log('B')">B</div>
-                <div class="action-btn btn-a" onclick="console.log('A')">A</div>
+            <div id="controls-area">
+                <div id="dpad">
+                    <div class="btn" style="grid-column:2" onclick="move('up')">▲</div>
+                    <div class="btn" style="grid-column:1; grid-row:2" onclick="move('left')">◀</div>
+                    <div class="btn" style="grid-column:3; grid-row:2" onclick="move('right')">▶</div>
+                    <div class="btn" style="grid-column:2; grid-row:3" onclick="move('down')">▼</div>
+                </div>
+                <div style="display:flex; gap:20px;">
+                    <div class="action-btn btn-b" onclick="changePage('item-page')">ITEM</div>
+                    <div class="action-btn btn-a" onclick="changePage('battle-page')">TEST</div>
+                </div>
             </div>
         </div>
+    </div>
+
+    <div id="battle-page" class="page">
+        <h2>BATTLE MODE</h2>
+        <button onclick="changePage('game-page')">RUN AWAY</button>
+    </div>
+
+    <div id="item-page" class="page">
+        <h2>INVENTORY</h2>
+        <button onclick="changePage('game-page')">CLOSE</button>
     </div>
 
     <script src="main.js"></script>
