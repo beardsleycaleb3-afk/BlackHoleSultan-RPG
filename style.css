@@ -1,42 +1,14 @@
 * { box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: monospace; }
 
-#console-frame { height: 100%; background: #2a2a2a; display: flex; flex-direction: column; padding: 10px; }
-#viewport { flex: 0 0 65%; background: #000; border: 8px solid #111; border-radius: 12px; position: relative; overflow: hidden; }
+#console-frame { height: 100vh; background: linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 100%); display: flex; flex-direction: column; padding: 12px; box-sizing: border-box; }
 
-/* UI LAYERS (Start, Menu) sit ON TOP of the world */
-.ui-layer { position: absolute; inset: 0; display: none; background-size: cover; background-position: center; z-index: 100; }
-.active { display: block; }
+#viewport { flex: 0 0 68%; background: #0a0a0a; border: 6px solid #d4af37; border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
 
-#view-start { background-image: url('Start_BG.png'); background-color: #111; }
-#view-items { background-image: url('ItemsBG.png'); background-color: #001; }
-#view-skills { background-image: url('SkillsBG.png'); background-color: #010; }
+.ui-layer { position: absolute; inset: 0; display: none; background: rgba(10,10,10,0.95); z-index: 100; }
+.ui-layer.active { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #e0e0e0; text-align: center; font-size: 18px; }
+#view-start h1 { color: #ffd700; font-size: 22px; margin: 0; text-shadow: 0 0 10px #ffd700; }
+.menu-item { background: #333; padding: 12px 20px; border-radius: 6px; cursor: pointer; border: 2px solid #555; margin: 8px 0; width: 80%; font-size: 16px; }
+.menu-item:active { background: #555; }
 
-/* WORLD CONTAINER */
-#world-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
-#world-container.active-world { display: block; }
-
-/* The Map is huge (set in JS), we move this div to scroll */
-#map-layer { position: absolute; top: 0; left: 0; display: grid; } 
-
-.tile { width: 40px; height: 40px; background-size: cover; image-rendering: pixelated; }
-
-/* Player is absolute inside the world */
-#player { 
-    position: absolute; width: 40px; height: 40px; 
-    background-size: contain; background-repeat: no-repeat; 
-    z-index: 50; image-rendering: pixelated; 
-    background-image: url('S_IdleRS.png'); 
-}
-
-/* CONTROLS (Same as before) */
-#controls-area { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
-#system-bars { display: flex; gap: 40px; margin-bottom: 25px; }
-.bar-btn { width: 60px; height: 15px; background: #444; border: 2px solid #000; border-radius: 4px; box-shadow: 0 3px #111; cursor: pointer; }
-#main-controls { display: flex; width: 100%; justify-content: space-around; align-items: center; }
-#dpad { display: grid; grid-template-columns: repeat(3, 45px); grid-template-rows: repeat(3, 45px); gap: 5px; }
-.d-btn { width: 45px; height: 45px; background: #1a1a1a; color: white; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid #444; cursor: pointer; }
-.up { grid-column: 2; grid-row: 1; } .left { grid-column: 1; grid-row: 2; } .right { grid-column: 3; grid-row: 2; } .down { grid-column: 2; grid-row: 3; }
-#action-btns { position: relative; width: 130px; height: 130px; }
-.round-btn { position: absolute; width: 65px; height: 65px; border-radius: 50%; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 5px #000; border: 4px solid #111; cursor: pointer; font-family: sans-serif; }
-.btn-b { background: #2980b9; top: 0; right: 0; } .btn-a { background: #c0392b; bottom: 0; left: 0; }
+#world-container { position: absolute; top
