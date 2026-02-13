@@ -1,59 +1,128 @@
-// Attach functions to window so the HTML 'onclick' can always find them
-window.currentView = 'view-start';
-window.playerPos = { x: 2, y: 2 };
+// CONFIG
+const TILE_SIZE = 40; // Pixels
+const MAP_WIDTH = 50; // 50 tiles wide
+const MAP_HEIGHT = 50; // 50 tiles high
+const SPEED = 5;
+
+// STATE
+let playerX = 200; // Starting pixels
+let playerY = 200;
+let isMoving = false;
+let moveDir = '';
+let gameLoopId;
+
+// ASSETS
 const floorAssets = ['GW1.png', 'GWTopedge.png', 'GWbottomedgeT.png'];
-const mapData = [
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,0,0,0,1],
-    [1,0,1,1,0,0,1,1,0,1],
-    [1,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1]
-];
+// Simple random map generation (1 = Wall, 0 = Floor)
+let mapData = [];
 
-window.changeView = function(id) {
-    document.querySelectorAll('.game-view').forEach(v => v.classList.remove('active'));
-    const target = document.getElementById(id);
-    if(target) {
-        target.classList.add('active');
-        window.currentView = id;
+function generateMap() {
+    for(let y=0; y<MAP_HEIGHT; y++) {
+        let row = [];
+        for(let x=0; x<MAP_WIDTH; x++) {
+            // Borders are walls, random inner walls
+            if (x===0 || x===MAP_WIDTH-1 || y===0 || y===MAP_HEIGHT-1) row.push(1);
+            else if (Math.random() > 0.9) row.push(1); // 10% chance of random wall
+            else row.push(0);
+        }
+        mapData.push(row);
     }
-};
+}
 
-window.handleActionA = function() {
-    if (window.currentView === 'view-start') {
-        window.changeView('view-map');
-    }
-};
+window.initGame = function() {
+    generateMap();
+    const mapLayer = document.getElementById('map-layer');
+    
+    // Set grid size
+    mapLayer.style.width = (MAP_WIDTH * TILE_SIZE) + 'px';
+    mapLayer.style.height = (MAP_HEIGHT * TILE_SIZE) + 'px';
+    mapLayer.style.gridTemplateColumns = `repeat(${MAP_WIDTH}, ${TILE_SIZE}px)`;
 
-window.move = function(dir) {
-    if (window.currentView !== 'view-map') return;
-    let nx = window.playerPos.x;
-    let ny = window.playerPos.y;
-    const p = document.getElementById('player');
-
-    if (dir === 'up') { ny--; p.style.backgroundImage = "url('N_IdleRS.png')"; }
-    if (dir === 'down') { ny++; p.style.backgroundImage = "url('S_IdleRS.png')"; }
-    if (dir === 'left') { nx--; p.style.backgroundImage = "url('W_IdleRS.png')"; }
-    if (dir === 'right') { nx++; p.style.backgroundImage = "url('E_IdleRS.png')"; }
-
-    if (mapData[ny] && mapData[ny][nx] === 0) {
-        window.playerPos.x = nx;
-        window.playerPos.y = ny;
-        p.style.left = (nx * 10) + '%';
-        p.style.top = (ny * 10) + '%';
-    }
-};
-
-// Auto-draw map
-const grid = document.getElementById('map-grid');
-if(grid) {
+    // Draw tiles
+    mapLayer.innerHTML = '';
     mapData.forEach(row => {
         row.forEach(cell => {
             const div = document.createElement('div');
             div.className = 'tile';
-            if (cell === 1) div.style.backgroundImage = "url('NWYBorder.png')";
-            else div.style.backgroundImage = `url('${floorAssets[Math.floor(Math.random()*3)]}')`;
-            grid.appendChild(div);
+            if(cell === 1) div.style.backgroundImage = "url('NWYBorder.png')";
+            else div.style.backgroundImage = `url('${floorAssets[Math.floor(Math.random()*floorAssets.length)]}')`;
+            mapLayer.appendChild(div);
         });
     });
+
+    updateCamera();
+};
+
+window.actionA = function() {
+    // Start Game
+    document.getElementById('view-start').classList.remove('active');
+    document.getElementById('world-container').classList.add('active-world');
+    window.initGame();
+};
+
+window.toggleUI = function(id) {
+    const el = document.getElementById(id);
+    if(el.classList.contains('active')) {
+        el.classList.remove('active');
+    } else {
+        // Close other menus first
+        document.querySelectorAll('.ui-layer').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
+    }
+};
+
+// MOVEMENT LOOP
+window.startMove = function(dir) {
+    moveDir = dir;
+    if(!isMoving) {
+        isMoving = true;
+        gameLoop();
+    }
+};
+
+window.stopMove = function() {
+    isMoving = false;
+    cancelAnimationFrame(gameLoopId);
+};
+
+function gameLoop() {
+    if(!isMoving) return;
+
+    let nextX = playerX;
+    let nextY = playerY;
+    const playerDiv = document.getElementById('player');
+
+    if(moveDir === 'up') { nextY -= SPEED; playerDiv.style.backgroundImage = "url('N_IdleRS.png')"; }
+    if(moveDir === 'down') { nextY += SPEED; playerDiv.style.backgroundImage = "url('S_IdleRS.png')"; }
+    if(moveDir === 'left') { nextX -= SPEED; playerDiv.style.backgroundImage = "url('W_IdleRS.png')"; }
+    if(moveDir === 'right') { nextX += SPEED; playerDiv.style.backgroundImage = "url('E_IdleRS.png')"; }
+
+    // Collision Check (Convert pixel to grid coord)
+    let gridX = Math.floor((nextX + 20) / TILE_SIZE); // +20 for center of player
+    let gridY = Math.floor((nextY + 20) / TILE_SIZE);
+
+    if(mapData[gridY] && mapData[gridY][gridX] === 0) {
+        playerX = nextX;
+        playerY = nextY;
+        updateCamera();
+    }
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+function updateCamera() {
+    const playerDiv = document.getElementById('player');
+    const mapLayer = document.getElementById('map-layer');
+    const viewport = document.getElementById('viewport');
+
+    // Place Player in World
+    playerDiv.style.left = playerX + 'px';
+    playerDiv.style.top = playerY + 'px';
+
+    // Move Map Layer so Player is centered
+    // Center = (ViewportWidth / 2) - PlayerX
+    let camX = (viewport.clientWidth / 2) - playerX - (TILE_SIZE/2);
+    let camY = (viewport.clientHeight / 2) - playerY - (TILE_SIZE/2);
+
+    mapLayer.style.transform = `translate(${camX}px, ${camY}px)`;
 }
