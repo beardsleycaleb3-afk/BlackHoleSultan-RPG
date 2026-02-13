@@ -6,35 +6,30 @@
     <title>Black Hole Sultan</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+        #game-map { position: absolute; width: 100vw; height: 100vh; background-image: url('GW1.png'); background-size: 32px 32px; image-rendering: pixelated; }
+        #player { position: absolute; top: 50%; left: 50%; width: 64px; height: 64px; transform: translate(-50%, -50%); background-image: url('S_IdleRS.png'); background-size: contain; background-repeat: no-repeat; image-rendering: pixelated; z-index: 2; }
         
-        /* The Floor */
-        #game-map {
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            background-image: url('GW1.png');
-            background-size: 32px 32px;
-            image-rendering: pixelated;
-        }
-
-        /* The Character */
-        #player {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 64px; /* Double the tile size so he stands out */
-            height: 64px;
-            transform: translate(-50%, -50%); /* Keeps him perfectly centered */
-            background-image: url('S_IdleRS.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            image-rendering: pixelated;
-        }
+        /* D-Pad Layout */
+        #controls { position: absolute; bottom: 20px; left: 20px; display: grid; grid-template-columns: repeat(3, 50px); gap: 5px; z-index: 10; }
+        .btn { width: 50px; height: 50px; background: rgba(255,255,255,0.3); border: 2px solid #fff; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 10px; }
+        .up { grid-column: 2; }
+        .left { grid-column: 1; grid-row: 2; }
+        .down { grid-column: 2; grid-row: 2; }
+        .right { grid-column: 3; grid-row: 2; }
     </style>
 </head>
 <body>
     <div id="game-map">
         <div id="player"></div>
     </div>
+
+    <div id="controls">
+        <div class="btn up" onclick="move('up')">▲</div>
+        <div class="btn left" onclick="move('left')">◀</div>
+        <div class="btn down" onclick="move('down')">▼</div>
+        <div class="btn right" onclick="move('right')">▶</div>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>
