@@ -1,128 +1,140 @@
 // CONFIG
-const TILE_SIZE = 40; // Pixels
-const MAP_WIDTH = 50; // 50 tiles wide
-const MAP_HEIGHT = 50; // 50 tiles high
-const SPEED = 5;
+const TILE_SIZE = 40;
+const MAP_WIDTH = 50; 
+const MAP_HEIGHT = 50;
+const SPEED = 8;
 
 // STATE
-let playerX = 200; // Starting pixels
-let playerY = 200;
-let isMoving = false;
-let moveDir = '';
-let gameLoopId;
+window.playerX = 160; // Spawned safely away from edges
+window.playerY = 160;
+window.isMoving = false;
+window.moveDir = '';
+window.gameLoopId = null;
 
-// ASSETS
 const floorAssets = ['GW1.png', 'GWTopedge.png', 'GWbottomedgeT.png'];
-// Simple random map generation (1 = Wall, 0 = Floor)
-let mapData = [];
+let mapData = []; // 0 = Walkable, 1 = Solid Wall
 
 function generateMap() {
+    mapData = [];
     for(let y=0; y<MAP_HEIGHT; y++) {
         let row = [];
         for(let x=0; x<MAP_WIDTH; x++) {
-            // Borders are walls, random inner walls
-            if (x===0 || x===MAP_WIDTH-1 || y===0 || y===MAP_HEIGHT-1) row.push(1);
-            else if (Math.random() > 0.9) row.push(1); // 10% chance of random wall
-            else row.push(0);
+            // Create a solid yellow border around the 50x50 world
+            if (x===0 || x===MAP_WIDTH-1 || y===0 || y===MAP_HEIGHT-1) {
+                row.push(1); 
+            } else {
+                row.push(0); // Everything else is walkable floor
+            }
         }
         mapData.push(row);
     }
 }
 
-window.initGame = function() {
+window.actionA = function() {
+    const startView = document.getElementById('view-start');
+    if (startView && startView.classList.contains('active')) {
+        startView.classList.remove('active');
+        document.getElementById('world-container').classList.add('active-world');
+        initGame();
+    }
+};
+
+function initGame() {
     generateMap();
     const mapLayer = document.getElementById('map-layer');
-    
-    // Set grid size
     mapLayer.style.width = (MAP_WIDTH * TILE_SIZE) + 'px';
     mapLayer.style.height = (MAP_HEIGHT * TILE_SIZE) + 'px';
     mapLayer.style.gridTemplateColumns = `repeat(${MAP_WIDTH}, ${TILE_SIZE}px)`;
 
-    // Draw tiles
     mapLayer.innerHTML = '';
     mapData.forEach(row => {
         row.forEach(cell => {
             const div = document.createElement('div');
             div.className = 'tile';
-            if(cell === 1) div.style.backgroundImage = "url('NWYBorder.png')";
-            else div.style.backgroundImage = `url('${floorAssets[Math.floor(Math.random()*floorAssets.length)]}')`;
+            if(cell === 1) {
+                div.style.backgroundImage = "url('NWYBorder.png')";
+            } else {
+                // Randomly pick one of your 3 floor tiles for visual variety
+                const randomIndex = Math.floor(Math.random() * floorAssets.length);
+                div.style.backgroundImage = `url('${floorAssets[randomIndex]}')`;
+            }
+            grid.appendChild(div); // Wait, make sure grid is defined
+        });
+    });
+    // Fix: Ensuring we append to mapLayer
+    mapData.forEach((row, y) => {
+        row.forEach((cell, x) => {
+            const div = document.createElement('div');
+            div.className = 'tile';
+            if(cell === 1) {
+                div.style.backgroundImage = "url('NWYBorder.png')";
+            } else {
+                const randomFloor = floorAssets[Math.floor(Math.random() * floorAssets.length)];
+                div.style.backgroundImage = `url('${randomFloor}')`;
+            }
             mapLayer.appendChild(div);
         });
     });
-
     updateCamera();
-};
-
-window.actionA = function() {
-    // Start Game
-    document.getElementById('view-start').classList.remove('active');
-    document.getElementById('world-container').classList.add('active-world');
-    window.initGame();
-};
+}
 
 window.toggleUI = function(id) {
     const el = document.getElementById(id);
-    if(el.classList.contains('active')) {
-        el.classList.remove('active');
-    } else {
-        // Close other menus first
-        document.querySelectorAll('.ui-layer').forEach(l => l.classList.remove('active'));
-        el.classList.add('active');
-    }
+    if(!el) return;
+    const wasActive = el.classList.contains('active');
+    document.querySelectorAll('.ui-layer').forEach(l => l.classList.remove('active'));
+    if(!wasActive) el.classList.add('active');
 };
 
-// MOVEMENT LOOP
 window.startMove = function(dir) {
-    moveDir = dir;
-    if(!isMoving) {
-        isMoving = true;
+    window.moveDir = dir;
+    if(!window.isMoving) {
+        window.isMoving = true;
         gameLoop();
     }
 };
 
 window.stopMove = function() {
-    isMoving = false;
-    cancelAnimationFrame(gameLoopId);
+    window.isMoving = false;
+    cancelAnimationFrame(window.gameLoopId);
 };
 
 function gameLoop() {
-    if(!isMoving) return;
+    if(!window.isMoving) return;
 
-    let nextX = playerX;
-    let nextY = playerY;
+    let nextX = window.playerX;
+    let nextY = window.playerY;
     const playerDiv = document.getElementById('player');
 
-    if(moveDir === 'up') { nextY -= SPEED; playerDiv.style.backgroundImage = "url('N_IdleRS.png')"; }
-    if(moveDir === 'down') { nextY += SPEED; playerDiv.style.backgroundImage = "url('S_IdleRS.png')"; }
-    if(moveDir === 'left') { nextX -= SPEED; playerDiv.style.backgroundImage = "url('W_IdleRS.png')"; }
-    if(moveDir === 'right') { nextX += SPEED; playerDiv.style.backgroundImage = "url('E_IdleRS.png')"; }
+    if(window.moveDir === 'up') { nextY -= SPEED; playerDiv.style.backgroundImage = "url('N_IdleRS.png')"; }
+    if(window.moveDir === 'down') { nextY += SPEED; playerDiv.style.backgroundImage = "url('S_IdleRS.png')"; }
+    if(window.moveDir === 'left') { nextX -= SPEED; playerDiv.style.backgroundImage = "url('W_IdleRS.png')"; }
+    if(window.moveDir === 'right') { nextX += SPEED; playerDiv.style.backgroundImage = "url('E_IdleRS.png')"; }
 
-    // Collision Check (Convert pixel to grid coord)
-    let gridX = Math.floor((nextX + 20) / TILE_SIZE); // +20 for center of player
+    // Collision Check: Find the tile coordinate for the player's center
+    let gridX = Math.floor((nextX + 20) / TILE_SIZE);
     let gridY = Math.floor((nextY + 20) / TILE_SIZE);
 
+    // Only move if the tile is a '0' (Walkable Floor)
     if(mapData[gridY] && mapData[gridY][gridX] === 0) {
-        playerX = nextX;
-        playerY = nextY;
+        window.playerX = nextX;
+        window.playerY = nextY;
         updateCamera();
     }
 
-    gameLoopId = requestAnimationFrame(gameLoop);
+    window.gameLoopId = requestAnimationFrame(gameLoop);
 }
 
 function updateCamera() {
-    const playerDiv = document.getElementById('player');
-    const mapLayer = document.getElementById('map-layer');
-    const viewport = document.getElementById('viewport');
+    const p = document.getElementById('player');
+    const m = document.getElementById('map-layer');
+    const v = document.getElementById('viewport');
 
-    // Place Player in World
-    playerDiv.style.left = playerX + 'px';
-    playerDiv.style.top = playerY + 'px';
+    p.style.left = window.playerX + 'px';
+    p.style.top = window.playerY + 'px';
 
-    // Move Map Layer so Player is centered
-    // Center = (ViewportWidth / 2) - PlayerX
-    let camX = (viewport.clientWidth / 2) - playerX - (TILE_SIZE/2);
-    let camY = (viewport.clientHeight / 2) - playerY - (TILE_SIZE/2);
+    let camX = (v.clientWidth / 2) - window.playerX - 20;
+    let camY = (v.clientHeight / 2) - window.playerY - 20;
 
-    mapLayer.style.transform = `translate(${camX}px, ${camY}px)`;
+    m.style.transform = `translate(${camX}px, ${camY}px)`;
 }
