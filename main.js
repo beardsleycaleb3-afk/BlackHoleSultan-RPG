@@ -1,12 +1,23 @@
 const player = document.getElementById('player');
+
+// Starting positions
 let posX = window.innerWidth / 2;
 let posY = (window.innerHeight * 0.7) / 2;
 const speed = 20;
 
-// PAGE ROUTER
+// PAGE ROUTER: This handles switching between Start, Game, Battle, and Items
 function changePage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+    // Hide all pages by removing the 'active' class
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none'; // Explicitly hide
+    });
+
+    // Show the selected page
+    const activePage = document.getElementById(pageId);
+    activePage.classList.add('active');
+    activePage.style.display = 'flex'; // Explicitly show
 }
 
 // MOVEMENT LOGIC
