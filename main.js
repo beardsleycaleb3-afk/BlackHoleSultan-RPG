@@ -1,14 +1,30 @@
 const player = document.getElementById('player');
+
+// Initial Position (Center of the 75% viewport)
 let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2;
-const speed = 16; // Moves half a tile per tap
+let posY = (window.innerHeight * 0.75) / 2;
+const speed = 20;
 
 function move(direction) {
-    if (direction === 'up') posY -= speed;
-    if (direction === 'down') posY += speed;
-    if (direction === 'left') posX -= speed;
-    if (direction === 'right') posX += speed;
+    // 1. TURN THE CHARACTER
+    if (direction === 'up') {
+        player.style.backgroundImage = "url('N_IdleRS.png')";
+        if (posY > 40) posY -= speed; // Stop at top edge
+    }
+    if (direction === 'down') {
+        player.style.backgroundImage = "url('S_IdleRS.png')";
+        if (posY < (window.innerHeight * 0.75) - 40) posY += speed; // Stop at bottom edge
+    }
+    if (direction === 'left') {
+        player.style.backgroundImage = "url('W_IdleRS.png')";
+        if (posX > 40) posX -= speed; // Stop at left edge
+    }
+    if (direction === 'right') {
+        player.style.backgroundImage = "url('E_IdleRS.png')";
+        if (posX < window.innerWidth - 40) posX += speed; // Stop at right edge
+    }
 
+    // 2. APPLY MOVEMENT
     player.style.top = posY + 'px';
     player.style.left = posX + 'px';
 }
