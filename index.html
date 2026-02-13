@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Black Hole Sultan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="console-frame">
+        <div id="viewport">
+            <div id="view-start" class="game-view active">
+                <div class="title-art"></div> <h2 style="color:gold; text-align:center; margin-top:40%">PRESS START</h2>
+            </div>
+
+            <div id="view-map" class="game-view">
+                <div id="inner-border"></div>
+                <div id="player"></div>
+            </div>
+
+            <div id="view-items" class="game-view">
+                <h2 style="color:white; padding:20px;">INVENTORY</h2>
+            </div>
+        </div>
+
+        <div id="controls-area">
+            <div id="dpad">
+                <div class="btn up" onclick="game.move('up')">▲</div>
+                <div class="btn left" onclick="game.move('left')">◀</div>
+                <div class="btn right" onclick="game.move('right')">▶</div>
+                <div class="btn down" onclick="game.move('down')">▼</div>
+            </div>
+
+            <div id="system-btns">
+                <div class="pill-btn" onclick="game.switch('view-items')"></div>
+                <div class="pill-btn" onclick="game.switch('view-map')"></div>
+                <div class="label-row"><span>SELECT</span><span>START</span></div>
+            </div>
+
+            <div id="action-btns">
+                <div class="round-btn btn-b" onclick="game.btnB()">B</div>
+                <div class="round-btn btn-a" onclick="game.btnA()">A</div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
