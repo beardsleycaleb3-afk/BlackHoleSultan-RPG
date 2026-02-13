@@ -5,30 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Black Hole Sultan</title>
     <style>
-        /* Body creates the outer 10px edge/frame */
+        * { box-sizing: border-box; }
+        
         body, html { 
             margin: 0; padding: 0; 
             width: 100%; height: 100%; 
             overflow: hidden; 
-            background: #1a1a1a; /* The color of the frame */
-            display: flex; flex-direction: column; 
-            font-family: sans-serif; 
-            box-sizing: border-box;
-            padding: 10px 10px 0 10px; /* 10px edge on Top, Left, and Right */
+            background: #1a1a1a; 
+            display: flex; 
+            flex-direction: column; 
         }
         
-        /* THE VIEWPORT (Now looks like a screen inside the frame) */
+        /* The 10px Outer Console Frame */
+        #frame {
+            padding: 10px 10px 0 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* THE VIEWPORT (Top 75%) */
         #viewport { 
             position: relative; 
+            flex: 0 0 75%; 
             width: 100%; 
-            height: 75vh; 
             background-image: url('GW1.png'); 
             background-size: 32px 32px; 
             image-rendering: pixelated; 
-            border: 4px solid #000; /* Black inner bezel */
-            border-radius: 5px;
+            /* THE NW BORDER: 10px solid using your border tile */
+            border: 10px solid transparent;
+            border-image: url('NWYBorder.png') 32 round; 
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: inset 0 0 10px #000;
         }
 
         #player { 
@@ -43,20 +51,17 @@
             z-index: 2;
         }
 
-        /* THE CONSOLE (Stretches to the edges) */
+        /* THE CONSOLE (Bottom 25%) */
         #console { 
-            flex-grow: 1;
-            margin: 0 -10px; /* Pulls console back to screen edges */
+            flex: 1; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 0 20px; 
+            padding: 10px; 
             background: #222; 
-            box-sizing: border-box;
-            border-top: 2px solid #444;
         }
 
-        /* D-PAD - Classic Cross Layout */
+        /* D-PAD - Cross Shape */
         #dpad { 
             display: grid; 
             grid-template-columns: repeat(3, 50px); 
@@ -67,44 +72,46 @@
             width: 50px; height: 50px; 
             background: #333; border: 2px solid #555; 
             color: #fff; display: flex; align-items: center; justify-content: center; 
-            border-radius: 8px; font-weight: bold; font-size: 22px; touch-action: manipulation;
+            border-radius: 8px; font-weight: bold; touch-action: manipulation;
         }
         .up { grid-column: 2; grid-row: 1; }
         .left { grid-column: 1; grid-row: 2; }
         .right { grid-column: 3; grid-row: 2; }
         .down { grid-column: 2; grid-row: 3; }
 
-        #action-buttons { display: flex; gap: 20px; }
+        /* ACTION BUTTONS */
+        #action-buttons { display: flex; gap: 10px; }
         .action-btn { 
-            width: 65px; height: 65px; 
+            width: 60px; height: 60px; 
             border-radius: 50%; border: 4px solid #444; 
-            color: white; font-weight: bold; font-size: 24px;
+            color: white; font-weight: bold; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
             touch-action: manipulation;
             box-shadow: 0 4px #000;
         }
         .btn-a { background: #c0392b; } 
         .btn-b { background: #2980b9; }
-        .action-btn:active { transform: translateY(2px); box-shadow: 0 2px #000; }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="player"></div>
-    </div>
-
-    <div id="console">
-        <div id="dpad">
-            <div class="btn up" onclick="move('up')">▲</div>
-            <div class="btn left" onclick="move('left')">◀</div>
-            <div class="btn right" onclick="move('right')">▶</div>
-            <div class="btn down" onclick="move('down')">▼</div>
+    <div id="frame">
+        <div id="viewport">
+            <div id="player"></div>
         </div>
 
-        <div id="action-buttons">
-            <div class="action-btn btn-b" onclick="console.log('B Decline')">B</div>
-            <div class="action-btn btn-a" onclick="console.log('A Accept')">A</div>
+        <div id="console">
+            <div id="dpad">
+                <div class="btn up" onclick="move('up')">▲</div>
+                <div class="btn left" onclick="move('left')">◀</div>
+                <div class="btn right" onclick="move('right')">▶</div>
+                <div class="btn down" onclick="move('down')">▼</div>
+            </div>
+
+            <div id="action-buttons">
+                <div class="action-btn btn-b" onclick="console.log('B')">B</div>
+                <div class="action-btn btn-a" onclick="console.log('A')">A</div>
+            </div>
         </div>
     </div>
 
