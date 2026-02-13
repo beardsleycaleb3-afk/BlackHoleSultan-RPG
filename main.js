@@ -1,43 +1,28 @@
-const player = document.getElementById('player');
+// All your walkable floor textures from GitHub
+const floorTextures = [
+    'GW1.png', 
+    'GWTopedge.png', 
+    'GWbottomedgeT.png'
+];
 
-// Starting positions
-let posX = window.innerWidth / 2;
-let posY = (window.innerHeight * 0.7) / 2;
-const speed = 20;
+function drawMap() {
+    const grid = document.getElementById('map-grid');
+    grid.innerHTML = '';
 
-// PAGE ROUTER: This handles switching between Start, Game, Battle, and Items
-function changePage(pageId) {
-    // Hide all pages by removing the 'active' class
-    const pages = document.querySelectorAll('.page');
-    pages.forEach(page => {
-        page.classList.remove('active');
-        page.style.display = 'none'; // Explicitly hide
+    mapLayout.forEach((row, y) => {
+        row.forEach((tileType, x) => {
+            const div = document.createElement('div');
+            div.className = 'tile';
+            
+            if (tileType === 1) {
+                // This is an inner wall or border
+                div.style.backgroundImage = "url('NWYBorder.png')";
+            } else {
+                // Pick a RANDOM floor tile from your library
+                const randomFloor = floorTextures[Math.floor(Math.random() * floorTextures.length)];
+                div.style.backgroundImage = `url('${randomFloor}')`;
+            }
+            grid.appendChild(div);
+        });
     });
-
-    // Show the selected page
-    const activePage = document.getElementById(pageId);
-    activePage.classList.add('active');
-    activePage.style.display = 'flex'; // Explicitly show
-}
-
-// MOVEMENT LOGIC
-function move(direction) {
-    if (direction === 'up') {
-        player.style.backgroundImage = "url('N_IdleRS.png')";
-        if (posY > 40) posY -= speed;
-    }
-    if (direction === 'down') {
-        player.style.backgroundImage = "url('S_IdleRS.png')";
-        if (posY < (window.innerHeight * 0.7) - 40) posY += speed;
-    }
-    if (direction === 'left') {
-        player.style.backgroundImage = "url('W_IdleRS.png')";
-        if (posX > 40) posX -= speed;
-    }
-    if (direction === 'right') {
-        player.style.backgroundImage = "url('E_IdleRS.png')";
-        if (posX < window.innerWidth - 40) posX += speed;
-    }
-    player.style.top = posY + 'px';
-    player.style.left = posX + 'px';
 }
