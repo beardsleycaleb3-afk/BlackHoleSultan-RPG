@@ -2,7 +2,7 @@ const TILE_SIZE = 40;
 const MAP_SIZE = 25;
 const SPEED = 7;
 
-window.playerX = 520;  // Center spawn
+window.playerX = 520;
 window.playerY = 520;
 window.isMoving = false;
 window.moveDir = '';
@@ -21,20 +21,19 @@ function initMap() {
             div.className = 'tile';
             
             if (x === 0 || x === MAP_SIZE-1 || y === 0 || y === MAP_SIZE-1) {
-                div.style.backgroundColor = '#d4af37'; // Gold border fallback
+                div.style.backgroundColor = '#d4af37';
                 row.push(1); 
             } 
             else if (y === 1 || y === MAP_SIZE - 2) {
-                div.style.backgroundColor = '#228B22'; // Green edge fallback
+                div.style.backgroundColor = '#228B22';
                 row.push(0); 
             }
             else {
-                div.style.backgroundColor = '#90EE90'; // Grass floor fallback
+                div.style.backgroundColor = '#90EE90';
                 row.push(0); 
             }
             
             mapLayer.appendChild(div);
-            row.push(0);
         }
         mapData.push(row);
     }
@@ -46,15 +45,15 @@ window.actionA = function() {
         startView.classList.remove('active');
         document.getElementById('world-container').classList.add('active-world');
         initMap();
-        updateCamera();  // ← FIXED: Centers player
-        window.playerX = 520;  // ← FIXED: Center spawn
+        updateCamera();
+        window.playerX = 520;
         window.playerY = 520;
     }
 };
 
 window.toggleUI = function(id) {
     const el = document.getElementById(id);
-    if (!el) return;  // ← FIXED: Safety check
+    if (!el) return;
     const wasActive = el.classList.contains('active');
     document.querySelectorAll('.ui-layer').forEach(l => l.classList.remove('active'));
     if (!wasActive) el.classList.add('active');
@@ -79,7 +78,7 @@ function gameLoop() {
     let nx = window.playerX, ny = window.playerY;
     const p = document.getElementById('player');
 
-    // ← FIXED: Safe direction switching with fallbacks
+    // EXACT FILENAMES - NO SPACES
     if (window.moveDir === 'up') { 
         ny -= SPEED; 
         p.style.backgroundImage = "url('N_IdleRS.png')"; 
@@ -97,7 +96,6 @@ function gameLoop() {
         p.style.backgroundImage = "url('E_IdleRS.png')"; 
     }
 
-    // ← FIXED: Safe collision bounds
     let gx = Math.max(0, Math.min(MAP_SIZE-1, Math.floor((nx + 20) / TILE_SIZE)));
     let gy = Math.max(0, Math.min(MAP_SIZE-1, Math.floor((ny + 20) / TILE_SIZE)));
 
@@ -115,7 +113,7 @@ function updateCamera() {
     const m = document.getElementById('map-layer');
     const v = document.getElementById('viewport');
     
-    if (!p || !m || !v) return;  // ← FIXED: Safety check
+    if (!p || !m || !v) return;
     
     p.style.left = window.playerX + 'px';
     p.style.top = window.playerY + 'px';
@@ -128,12 +126,10 @@ function updateCamera() {
     let camX = (viewW/2) - window.playerX - 20;
     let camY = (viewH/2) - window.playerY - 20;
     
-    // ← FIXED: Clamp camera bounds
     camX = Math.max(-(mapW - viewW), Math.min(0, camX));
     camY = Math.max(-(mapH - viewH), Math.min(0, camY));
     
     m.style.transform = `translate(${camX}px, ${camY}px)`;
 }
 
-// Auto-start camera on load
 window.addEventListener('load', updateCamera);
