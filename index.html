@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Black Hole Sultan</title>
     <style>
         * { box-sizing: border-box; }
@@ -11,32 +11,40 @@
             margin: 0; padding: 0; 
             width: 100%; height: 100%; 
             overflow: hidden; 
-            background: #1a1a1a; 
+            background: #2a2a2a; 
             display: flex; 
             flex-direction: column; 
         }
         
-        /* The 10px Outer Console Frame */
-        #frame {
-            padding: 10px 10px 0 10px;
+        /* THE CONSOLE FRAME - Added 40px bottom padding for phone gestures */
+        #console-frame {
+            padding: 15px 15px 40px 15px; 
             display: flex;
             flex-direction: column;
             height: 100%;
+            background: #2a2a2a; 
         }
 
-        /* THE VIEWPORT (Top 75%) */
         #viewport { 
             position: relative; 
-            flex: 0 0 75%; 
+            flex: 0 0 70%; 
             width: 100%; 
             background-image: url('GW1.png'); 
             background-size: 32px 32px; 
             image-rendering: pixelated; 
-            /* THE NW BORDER: 10px solid using your border tile */
-            border: 10px solid transparent;
-            border-image: url('NWYBorder.png') 32 round; 
-            border-radius: 4px;
+            border: 8px solid #000; 
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #inner-border {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 10px solid transparent;
+            border-image: url('NWYBorder.png') 32 round;
+            pointer-events: none;
+            z-index: 5;
         }
 
         #player { 
@@ -51,56 +59,54 @@
             z-index: 2;
         }
 
-        /* THE CONSOLE (Bottom 25%) */
-        #console { 
+        #controls-area { 
             flex: 1; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 10px; 
-            background: #222; 
+            padding: 10px 5px; 
+            background: #2a2a2a; 
         }
 
-        /* D-PAD - Cross Shape */
-        #dpad { 
-            display: grid; 
-            grid-template-columns: repeat(3, 50px); 
-            grid-template-rows: repeat(3, 50px); 
-            gap: 5px; 
-        }
+        /* D-PAD */
+        #dpad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); gap: 5px; }
         .btn { 
             width: 50px; height: 50px; 
-            background: #333; border: 2px solid #555; 
+            background: #1a1a1a; border: 2px solid #444; 
             color: #fff; display: flex; align-items: center; justify-content: center; 
-            border-radius: 8px; font-weight: bold; touch-action: manipulation;
+            border-radius: 10px; font-weight: bold; touch-action: manipulation;
+            box-shadow: 0 4px #000;
         }
         .up { grid-column: 2; grid-row: 1; }
         .left { grid-column: 1; grid-row: 2; }
         .right { grid-column: 3; grid-row: 2; }
         .down { grid-column: 2; grid-row: 3; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px #000; }
 
         /* ACTION BUTTONS */
-        #action-buttons { display: flex; gap: 10px; }
+        #action-buttons { display: flex; gap: 15px; }
         .action-btn { 
-            width: 60px; height: 60px; 
-            border-radius: 50%; border: 4px solid #444; 
-            color: white; font-weight: bold; font-size: 20px;
+            width: 65px; height: 65px; 
+            border-radius: 50%; border: 4px solid #1a1a1a; 
+            color: white; font-weight: bold; font-size: 22px;
             display: flex; align-items: center; justify-content: center;
             touch-action: manipulation;
-            box-shadow: 0 4px #000;
+            box-shadow: 0 5px #000;
         }
         .btn-a { background: #c0392b; } 
         .btn-b { background: #2980b9; }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px #000; }
     </style>
 </head>
 <body>
 
-    <div id="frame">
+    <div id="console-frame">
         <div id="viewport">
+            <div id="inner-border"></div>
             <div id="player"></div>
         </div>
 
-        <div id="console">
+        <div id="controls-area">
             <div id="dpad">
                 <div class="btn up" onclick="move('up')">▲</div>
                 <div class="btn left" onclick="move('left')">◀</div>
