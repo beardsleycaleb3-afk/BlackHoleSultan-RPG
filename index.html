@@ -10,38 +10,43 @@
 <body>
     <div id="console-frame">
         <div id="viewport">
-            <div id="view-start" class="game-view active">
+            <div id="view-start" class="ui-layer active">
                 <h1 style="color:gold; text-align:center; margin-top:40%; font-family:sans-serif;">PRESS START</h1>
             </div>
-            <div id="view-map" class="game-view">
-                <div id="map-grid"></div>
+            
+            <div id="view-items" class="ui-layer"></div>
+            <div id="view-skills" class="ui-layer"></div>
+
+            <div id="world-container">
+                <div id="map-layer"></div>
                 <div id="player"></div>
             </div>
-            <div id="view-items" class="game-view"></div>
-            <div id="view-skills" class="game-view"></div>
         </div>
 
         <div id="controls-area">
             <div id="system-bars">
-                <div class="bar-btn" onclick="window.changeView('view-skills')"></div>
-                <div class="bar-btn" onclick="window.changeView('view-map')"></div>
+                <div class="bar-btn" onclick="window.toggleUI('view-skills')"></div>
+                <div class="bar-btn" onclick="window.toggleUI('view-map')"></div>
             </div>
 
             <div id="main-controls">
                 <div id="dpad">
-                    <div class="d-btn up" onclick="window.move('up')">▲</div>
-                    <div class="d-btn left" onclick="window.move('left')">◀</div>
-                    <div class="d-btn right" onclick="window.move('right')">▶</div>
-                    <div class="d-btn down" onclick="window.move('down')">▼</div>
+                    <div class="d-btn up" onpointerdown="window.startMove('up')" onpointerup="window.stopMove()">▲</div>
+                    <div class="d-btn left" onpointerdown="window.startMove('left')" onpointerup="window.stopMove()">◀</div>
+                    <div class="d-btn right" onpointerdown="window.startMove('right')" onpointerup="window.stopMove()">▶</div>
+                    <div class="d-btn down" onpointerdown="window.startMove('down')" onpointerup="window.stopMove()">▼</div>
                 </div>
 
                 <div id="action-btns">
-                    <div class="round-btn btn-b" onclick="window.changeView('view-items')">B</div>
-                    <div class="round-btn btn-a" onclick="window.handleActionA()">A</div>
+                    <div class="round-btn btn-b" onclick="window.toggleUI('view-items')">B</div>
+                    <div class="round-btn btn-a" onclick="window.actionA()">A</div>
                 </div>
             </div>
         </div>
     </div>
     <script src="main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    </script>
 </body>
 </html>
