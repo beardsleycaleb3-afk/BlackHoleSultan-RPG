@@ -24,7 +24,6 @@
             background: #2a2a2a; 
         }
 
-        /* VIEWPORT at 70% */
         #viewport { 
             position: relative; 
             flex: 0 0 70%; 
@@ -59,32 +58,36 @@
             z-index: 2;
         }
 
-        /* CONSOLE at 30% with extra bottom clearance */
         #controls-area { 
             flex: 0 0 30%; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 10px 10px 40px 10px; /* 40px bottom padding protects buttons from phone nav */
+            padding: 10px 20px 50px 20px; /* High bottom padding for phone nav */
             background: #2a2a2a; 
         }
 
-        /* D-PAD */
-        #dpad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); gap: 5px; }
+        /* D-PAD - Half Size (25px) with wide gaps (20px) */
+        #dpad { 
+            display: grid; 
+            grid-template-columns: repeat(3, 25px); 
+            grid-template-rows: repeat(3, 25px); 
+            gap: 20px; 
+        }
         .btn { 
-            width: 50px; height: 50px; 
-            background: #1a1a1a; border: 2px solid #444; 
+            width: 25px; height: 25px; 
+            background: #1a1a1a; border: 1px solid #444; 
             color: #fff; display: flex; align-items: center; justify-content: center; 
-            border-radius: 10px; font-weight: bold; touch-action: manipulation;
-            box-shadow: 0 4px #000;
+            border-radius: 4px; font-weight: bold; font-size: 12px; touch-action: manipulation;
+            box-shadow: 0 3px #000;
         }
         .up { grid-column: 2; grid-row: 1; }
         .left { grid-column: 1; grid-row: 2; }
         .right { grid-column: 3; grid-row: 2; }
         .down { grid-column: 2; grid-row: 3; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px #000; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 1px #000; }
 
-        /* ACTION BUTTONS */
+        /* ACTION BUTTONS - Keeping these a good size */
         #action-buttons { display: flex; gap: 15px; }
         .action-btn { 
             width: 65px; height: 65px; 
