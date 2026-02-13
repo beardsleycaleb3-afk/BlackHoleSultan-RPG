@@ -1,67 +1,59 @@
-const game = {
-    view: 'view-start',
-    pos: { x: 4, y: 4 },
-    floorTypes: ['GW1.png', 'GWTopedge.png', 'GWbottomedgeT.png'],
-    
-    mapLayout: [
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,1,1,0,0,1,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,1,1,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]
-    ],
+// Attach functions to window so the HTML 'onclick' can always find them
+window.currentView = 'view-start';
+window.playerPos = { x: 2, y: 2 };
+const floorAssets = ['GW1.png', 'GWTopedge.png', 'GWbottomedgeT.png'];
+const mapData = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,0,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1]
+];
 
-    init() {
-        this.drawMap();
-        this.updatePlayer();
-    },
-
-    switch(id) {
-        document.querySelectorAll('.game-view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        this.view = id;
-    },
-
-    drawMap() {
-        const grid = document.getElementById('map-grid');
-        grid.innerHTML = '';
-        this.mapLayout.forEach(row => {
-            row.forEach(cell => {
-                const tile = document.createElement('div');
-                tile.className = 'tile';
-                if (cell === 1) tile.style.backgroundImage = "url('NWYBorder.png')";
-                else tile.style.backgroundImage = `url('${this.floorTypes[Math.floor(Math.random()*3)]}')`;
-                grid.appendChild(tile);
-            });
-        });
-    },
-
-    move(dir) {
-        if (this.view !== 'view-map') return;
-        let nx = this.pos.x, ny = this.pos.y;
-        const p = document.getElementById('player');
-        
-        if (dir === 'up') { ny--; p.style.backgroundImage = "url('N_IdleRS.png')"; }
-        if (dir === 'down') { ny++; p.style.backgroundImage = "url('S_IdleRS.png')"; }
-        if (dir === 'left') { nx--; p.style.backgroundImage = "url('W_IdleRS.png')"; }
-        if (dir === 'right') { nx++; p.style.backgroundImage = "url('E_IdleRS.png')"; }
-
-        if (this.mapLayout[ny] && this.mapLayout[ny][nx] === 0) {
-            this.pos.x = nx; this.pos.y = ny;
-            this.updatePlayer();
-        }
-    },
-
-    updatePlayer() {
-        const p = document.getElementById('player');
-        p.style.left = (this.pos.x * 10) + '%';
-        p.style.top = (this.pos.y * 10) + '%';
-    },
-
-    btnA() {
-        if (this.view === 'view-start') this.switch('view-map');
+window.changeView = function(id) {
+    document.querySelectorAll('.game-view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(target) {
+        target.classList.add('active');
+        window.currentView = id;
     }
 };
 
-game.init();
+window.handleActionA = function() {
+    if (window.currentView === 'view-start') {
+        window.changeView('view-map');
+    }
+};
+
+window.move = function(dir) {
+    if (window.currentView !== 'view-map') return;
+    let nx = window.playerPos.x;
+    let ny = window.playerPos.y;
+    const p = document.getElementById('player');
+
+    if (dir === 'up') { ny--; p.style.backgroundImage = "url('N_IdleRS.png')"; }
+    if (dir === 'down') { ny++; p.style.backgroundImage = "url('S_IdleRS.png')"; }
+    if (dir === 'left') { nx--; p.style.backgroundImage = "url('W_IdleRS.png')"; }
+    if (dir === 'right') { nx++; p.style.backgroundImage = "url('E_IdleRS.png')"; }
+
+    if (mapData[ny] && mapData[ny][nx] === 0) {
+        window.playerPos.x = nx;
+        window.playerPos.y = ny;
+        p.style.left = (nx * 10) + '%';
+        p.style.top = (ny * 10) + '%';
+    }
+};
+
+// Auto-draw map
+const grid = document.getElementById('map-grid');
+if(grid) {
+    mapData.forEach(row => {
+        row.forEach(cell => {
+            const div = document.createElement('div');
+            div.className = 'tile';
+            if (cell === 1) div.style.backgroundImage = "url('NWYBorder.png')";
+            else div.style.backgroundImage = `url('${floorAssets[Math.floor(Math.random()*3)]}')`;
+            grid.appendChild(div);
+        });
+    });
+}
