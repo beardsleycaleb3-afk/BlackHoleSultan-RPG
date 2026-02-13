@@ -12,10 +12,29 @@
         .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
         .active { display: flex; flex-direction: column; }
 
-        /* Start Screen */
-        #start-page { background: #1a1a1a; justify-content: center; align-items: center; color: gold; }
+        /* START PAGE STYLING */
+        #start-page { 
+            background: #1a1a1a; 
+            justify-content: center; 
+            align-items: center; 
+            color: gold;
+            text-align: center;
+        }
+        .menu-title { font-size: 2.5rem; margin-bottom: 40px; text-shadow: 2px 2px #000; }
+        .start-btn { 
+            padding: 20px 40px; 
+            font-size: 1.5rem; 
+            background: #c0392b; 
+            color: white; 
+            border: 4px solid #fff; 
+            border-radius: 12px; 
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px #000;
+        }
+        .start-btn:active { transform: translateY(4px); box-shadow: 0 2px #000; }
         
-        /* Game/Map Screen */
+        /* GAME/MAP PAGE */
         #game-page { background: #2a2a2a; }
         #console-frame { padding: 15px 15px 0 15px; display: flex; flex-direction: column; height: 100%; }
         #viewport { 
@@ -27,23 +46,23 @@
         #inner-border { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 10px solid transparent; border-image: url('NWYBorder.png') 32 round; pointer-events: none; z-index: 5; }
         #player { position: absolute; top: 50%; left: 50%; width: 64px; height: 64px; transform: translate(-50%, -50%); background-image: url('S_IdleRS.png'); background-size: contain; background-repeat: no-repeat; image-rendering: pixelated; z-index: 2; }
 
-        /* Controls Area */
+        /* CONTROLS AREA */
         #controls-area { flex: 0 0 30%; display: flex; justify-content: space-around; align-items: center; padding-bottom: 60px; }
-        #dpad { display: grid; grid-template-columns: repeat(3, 30px); gap: 25px; }
+        #dpad { display: grid; grid-template-columns: repeat(3, 30px); grid-template-rows: repeat(3, 30px); gap: 25px; }
         .btn { width: 30px; height: 30px; background: #1a1a1a; border: 1px solid #444; color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
-        .action-btn { width: 65px; height: 65px; border-radius: 50%; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px #000; }
+        .action-btn { width: 65px; height: 65px; border-radius: 50%; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px #000; font-size: 18px;}
         .btn-a { background: #c0392b; } .btn-b { background: #2980b9; }
 
-        /* Battle & Item Overlays */
-        #battle-page { background: maroon; justify-content: center; align-items: center; color: white; }
+        /* OVERLAYS */
+        #battle-page { background: #4a0000; justify-content: center; align-items: center; color: white; }
         #item-page { background: #111; justify-content: center; align-items: center; color: white; }
     </style>
 </head>
 <body>
 
     <div id="start-page" class="page active">
-        <h1>BLACK HOLE SULTAN</h1>
-        <button onclick="changePage('game-page')" style="padding:20px;">START GAME</button>
+        <h1 class="menu-title">BLACK HOLE SULTAN</h1>
+        <div class="start-btn" onclick="changePage('game-page')">START GAME</div>
     </div>
 
     <div id="game-page" class="page">
@@ -54,13 +73,13 @@
             </div>
             <div id="controls-area">
                 <div id="dpad">
-                    <div class="btn" style="grid-column:2" onclick="move('up')">▲</div>
+                    <div class="btn" style="grid-column:2; grid-row:1" onclick="move('up')">▲</div>
                     <div class="btn" style="grid-column:1; grid-row:2" onclick="move('left')">◀</div>
                     <div class="btn" style="grid-column:3; grid-row:2" onclick="move('right')">▶</div>
                     <div class="btn" style="grid-column:2; grid-row:3" onclick="move('down')">▼</div>
                 </div>
                 <div style="display:flex; gap:20px;">
-                    <div class="action-btn btn-b" onclick="changePage('item-page')">ITEM</div>
+                    <div class="action-btn btn-b" onclick="changePage('item-page')">ITEMS</div>
                     <div class="action-btn btn-a" onclick="changePage('battle-page')">TEST</div>
                 </div>
             </div>
@@ -69,12 +88,12 @@
 
     <div id="battle-page" class="page">
         <h2>BATTLE MODE</h2>
-        <button onclick="changePage('game-page')">RUN AWAY</button>
+        <div class="start-btn" onclick="changePage('game-page')">RUN AWAY</div>
     </div>
 
     <div id="item-page" class="page">
         <h2>INVENTORY</h2>
-        <button onclick="changePage('game-page')">CLOSE</button>
+        <div class="start-btn" onclick="changePage('game-page')">CLOSE</div>
     </div>
 
     <script src="main.js"></script>
